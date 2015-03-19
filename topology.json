@@ -1,0 +1,52 @@
+{
+  "name": "Test",
+  "role": "Cell",
+  "children": [
+    {
+      "name": "wasNode1",
+      "role": "ManagedNode",
+      "children": [
+        {
+          "name": "AppSrv01",
+          "role": "ApplicationServer"
+        }
+      ],
+      "attrs": {
+        "host_name": "talosdev.avnet.com",
+        "os_username": "root",
+        "os_password": "passw0rd",
+        "profile_home": "/opt/ibm/websphere/appserver/profiles/AppSrv01",
+        "profile_name": "AppSrv01"
+      }
+    },
+    {
+      "name": "dmgrNode",
+      "role": "DeploymentManager",
+      "children": [
+        {
+          "name": "Dmgr01",
+          "role": "DeploymentManagerServer"
+        }
+      ],
+      "attrs": {
+        "profile_name": "Dmgr01"
+      }
+    }
+  ],
+  "attrs": {
+    "was_version": "855",
+    "was_home": "/opt/ibm/websphere/appserver",
+    "im_version": "173",
+    "im_home": "/opt/ibm/im/home",
+    "im_cache_home": "/opt/ibm/im/cache",
+    "im_data_home": "/opt/ibm/im/data",
+    "host_name": "talosdev.avnet.com",
+    "os_username": "root",
+    "os_password": "passw0rd",
+    "was_username": "wasadmin",
+    "was_password": "passw0rd",
+    "profile_home": "/opt/ibm/websphere/appserver/profiles/Dmgr01",
+    "soap_port": "8879",
+    "ui.useRemoteSoap": ""
+  }
+}
