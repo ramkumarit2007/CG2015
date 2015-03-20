@@ -1,3 +1,4 @@
+var myCount = 0;
 jsPlumb.ready(function() {
 
   var exampleEndpointOptions = {
@@ -9,21 +10,17 @@ jsPlumb.ready(function() {
       maxConnections: -1
       };
 
-var count=0;
+count=0;
+shuriken=0;
 //providing dragging for .ninja class components
 $(".ninja").draggable({
   helper: 'clone',
   cursor: 'move',
-  //tolerance: 'fit',
-  //count++;
+
   stop: function (ev, ui) {
 
       var pos = $(ui.helper).offset();
       objName = "#clone" + count;
-      //count=count+1;
-      //$(objName).removeClass("ninja");
-      alert("count:"+count);
-      alert('objName:'+objName);
       $(objName).draggable({
             containment:".workspace",
             cancel: ".arrows"
@@ -33,10 +30,10 @@ $(".ninja").draggable({
       //When an existing object is dragged
       //objName is the clone and providing dragging option it
       //$(objName).draggable({
-        //  containment: ".workspace",
-        //  stop: function (ev, ui) {
+      //    containment: ".workspace",
+      //    stop: function (ev, ui) {
 
-        //  }
+      //    }
       //});
   },
   revert: true
@@ -44,103 +41,111 @@ $(".ninja").draggable({
 $(".workspace").droppable({
 
   accept: ".ninja",
-  //activeClass: "drop-area",
   drop: function (e, ui) {
 
 
       if ($(ui.draggable)[0].id != "") {
 
          count++;
+         myCount++;
 
-         alert("1st : "+count);
          x = ui.helper.clone();
          $(this).append(x.attr("id",'clone'+count));
-          if(x.context.textContent=="IHS")
-         {
-          $.ajax({
-           datatype: "json",
-           url: "ihs.json",
-           success:function(response){
-           console.log(response.data);
-           json=JSON.stringify(eval('('+response.data+')'));
-           arr=$.parseJSON(response.data);
-           console.log(arr);
-            },
-           error:function(error){
-           console.log(error)
-            }
-          });
-         };
-         if(x.context.textContent=="WAS")
-         {
-          $.ajax({
-           datatype: "json",
-           url: "WAS.json",
-           success:function(response){
-           console.log(response.data);
-            },
-           error:function(error){
-           console.log(error)
-            }
-          });
-         };
+         $(this).append(x.attr("pointExists",false));
+         $(this).append(x.attr("locked",false));
+         $(this).append(x.attr("myCount",'0'));
          ui.helper.remove();
 
+         if(x.context.textContent=="IHS")
+        {
+         $.ajax({
+          datatype: "json",
+          url: "ihs.json",
+          success:function(response){
+          console.log(response.data);
+          },
+          error:function(error){
+          console.log(error)
+           }
+         });
+        };
+        if(x.context.textContent=="WAS")
+        {
+         $.ajax({
+          datatype: "json",
+          url: "WAS.json",
+          success:function(response){
+          console.log(response.data);
+           },
+          error:function(error){
+          console.log(error)
+           }
+         });
+        };
 
-        var offsetXPos = ui.offset.left;
-        var offsetYPos = ui.offset.top;
+
+        //var offsetXPos = ui.offset.left;
+        //var offsetYPos = ui.offset.top;
 
 
 
-        var clone = ui.draggable;
-        var width = clone.width();
-        var height = clone.height();
+        //var clone = ui.draggable;
+        //var width = clone.width();
+        //var height = clone.height();
 
+        $(".ui-draggable-dragging").draggable({containment:".workspace"});
+               points=[];
+          $(".ui-draggable-dragging").dblclick(function(event) {
+              element=$(this);
 
-        //jsonElements.push(str);
-        var lock1=0;
-        var katana={};
+              var endpoint = count;
+              var id1=element.attr('id');
+              console.log("id is:"+id1);
 
-        $("#clone"+count).draggable({containment:".workspace"});
-          $("#clone"+count).dblclick(function(event) {
-
-              var points={};
-              var endpoint=count
-              //alert("endpoint:"+count);
-              if (lock1==0)
+              if (element.attr('pointExists')=="false")
               {
-              points[endpoint] =jsPlumb.addEndpoint('clone'+count, {
+                points[shuriken]= jsPlumb.addEndpoint(id1, {
                        anchor : "TopCenter",
                    },exampleEndpointOptions);
-
-                lock1=1;
-                $("#clone"+count).draggable({containment:".workspace",disabled:true});
-
-
-               //alert("point name:"+points[endpoint]);
+                   event.stopPropagation();
+                   $(this).attr('myCount',myCount);
+                   element.attr('pointExists',true);
+                   console.log(points[shuriken].elementId);
 
               }
               else
               {
-                var ep="ep_"+count;
+                console.log(element.attr('id'));
+                var myCount = $(this).attr('myCount');
+                //element.attr('myCount',myCount);
+                console.log(myCount);
+                console.log("trying to remove");
+                kk = jsPlumb.deleteEndpoint("clone1");
+                event.stopPropagation();
 
-                jsPlumb.deleteEveryEndpoint("#clone"+count);
-
-                $("#clone"+count).draggable({containment:".workspace",disabled:false});
-
-                lock1=0;
+                element.attr('pointExists',false);
               }
-              //var sourceUUID = "xxx";
-              //****************alert(count);****************************//
-             //addindg the end point to the clone
+              if (element.attr('locked')=="false")
+              {
+                //id1=element.attr('id')
+                console.log(element.attr('id')+' is locked');
+                $(".ui-draggable-dragging").draggable("disable");
+                $(".ui-draggable-dragging").draggable({containment:".workspace",disabled:true});
+                element.attr('locked',true);
+              }
+              else
+              {
 
+                console.log(id1 + 'is unlocked');
+                $(".ui-draggable-dragging").draggable("enable");
+                element.attr('locked',false);
+              }
+              $("#clone"+count).on('mouseenter', '.divbutton', function () {
+                    $(this).find(":button").show();
+                     }).on('mouseleave', '.divbutton', function () {
+                     $(this).find(":button").hide();
+                   });
 
-
-
-        //     instance.draggable(jsPlumb.getSelector(".workspace .window"),
-        //{
-        //    grid : [ 20, 20 ]
-        //});
 
 
           });
